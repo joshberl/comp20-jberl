@@ -1,4 +1,3 @@
-// Your JavaScript goes here...
 function parse() {
 	jsondata = data.json;
 	parsedMessages = JSON.parse(jsondata);
