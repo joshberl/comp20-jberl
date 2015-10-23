@@ -72,4 +72,30 @@ function new_marker(data, myname) {
 			map: map
 		});
 	}
+	var distance = dist(mylat, mylong, lat, lng);
+	var distance_string = '<h1>' + username + '</h1>' + '<p>' + distance ' miles from me.</p>';
+	marker.content = distance_string;
+	infowindow = new google.maps.InfoWindow();
+	google.maps.event.addListener(marker, 'click', function() {
+		infowindow.setContent(this.content);
+		infowindow.open(map, this);
+	});
+}
+
+function dist(mylat, mylong, lat, lng) {
+	Number.prototype.toRad = function() {
+		return this * Math.PI / 180;
+	}
+	var R = 6371;
+	var x1 = lat - mylat;
+	var dlat = x1.toRad();
+	var x2 = lng - mylong;
+	var dlon = x2.toRad();
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+            Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);  
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	var d = R * c; 
+	alert(d);
+	return d;
 }
