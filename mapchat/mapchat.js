@@ -50,7 +50,8 @@ function post(lat, lng, login) {
 	var params = "login=" + login + "&lat=" + lat + "&lng=" + lng;
 	request.open("POST", url, true);
 	request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	request.send(params);
+	request.setRequestHeader("Content-length", params.length);
+	request.setRequestHeader("Connection", "close");
 	request.onreadystatechange = function() {
 		if (request.readyState == 4 && request.status == 200) {
 			data = JSON.parse(request.responseText);
@@ -60,6 +61,7 @@ function post(lat, lng, login) {
 			}
 		}
 	}
+	request.send(params);
 }
 
 function new_marker(data, myname) {
