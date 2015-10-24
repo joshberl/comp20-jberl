@@ -1,7 +1,8 @@
 var request = new XMLHttpRequest();
 var mylat = 0;
 var mylong = 0;
-var mymessage = "Hello!"
+var mymessage = "Howdy!";
+var login = "RichRumfelt";
 var me = new google.maps.LatLng(mylat, mylong);
 var myOptions = {
 	zoom: 13,
@@ -13,6 +14,7 @@ var marker;
 var infowindow = new google.maps.InfoWindow();
 var lat = 0;
 var lng = 0;
+var message = "";
 
 function init() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
@@ -32,11 +34,11 @@ function getMyLocation() {
 }
 
 function renderMap() {
-	me = new google.maps.LatLng(mylat, mylong);
+	me = new google.maps.LatLng(mylat, mylong, mymessage);
 	map.panTo(me);
 	marker = new google.maps.Marker({
 		position: me,
-		title: "RichRumfelt",
+		title: login,
 		icon: 'chimp.png'
 	});
 	marker.setMap(map);
@@ -44,8 +46,7 @@ function renderMap() {
 		infowindow.setContent(marker.title);
 		infowindow.open(map, marker);
 	});
-	console.log("Calling post");
-	post(mylat, mylong, "RichRumfelt", "Hello!")
+	post(mylat, mylong, login, mymessage);
 }
 
 function post(lat, lng, login, message) {
@@ -57,7 +58,6 @@ function post(lat, lng, login, message) {
 		if (request.readyState == 4 && request.status == 200) {
 			data = JSON.parse(request.responseText);
 			for (i = 0; i < data.length; i++) {
-				console.log("calling new_marker");
 				new_marker(data[i], login);
 			}
 		}
@@ -67,7 +67,6 @@ function post(lat, lng, login, message) {
 
 function new_marker(data, myname) {
 	username = data["login"];
-	console.log(username, data)
 	if (username != myname) {	
 		lat = data["lat"];
 		lng = data["lng"];
@@ -75,18 +74,26 @@ function new_marker(data, myname) {
 		pos = new google.maps.LatLng(lat, lng);
 		marker = new google.maps.Marker({
 			position: pos,
-			title: username,
+			title: username + " " + message,
 			map: map
 		});
+		var distance = dist(mylat, mylong, lat, lng);
+		var distance_string = '<h1>' + username + '</h1><h2>' + message +'</h2><p>' + distance + ' miles from me.</p>';
+		marker.content = distance_string;
+		infowindow = new google.maps.InfoWindow();
+		google.maps.event.addListener(marker, 'click', function() {
+			infowindow.setContent(this.content);
+			infowindow.open(map, this);
+		});
+	} else {
+		var my_string = '<h1>' + myname + '</h1><h2>' + mymessage + '</h2>';
+		marker.content = my_string;
+		infowindow = new google.maps.InfoWindow();
+		google.maps.event.addListener(marker, 'click', function() {
+			infowindow.setContent(this.content);
+			infowindow.open(map, this);
+		});
 	}
-	var distance = dist(mylat, mylong, lat, lng);
-	var distance_string = '<h1>' + username + '</h1>' + '<h2>' + message +'</h2>' + '<p>' + distance + ' miles from me.</p>';
-	marker.content = distance_string;
-	infowindow = new google.maps.InfoWindow();
-	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.setContent(this.content);
-		infowindow.open(map, this);
-	});
 }
 
 function dist(mylat, mylong, lat, lng) {
@@ -98,11 +105,10 @@ function dist(mylat, mylong, lat, lng) {
 	var dlat = x1.toRad();
 	var x2 = lng - mylong;
 	var dlon = x2.toRad();
-	var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
-            Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2);  
+	var a = Math.sin(dlat/2) * Math.sin(dlat/2) + 
+            Math.cos(x1.toRad()) * Math.cos(x2.toRad()) * 
+            Math.sin(dlon/2) * Math.sin(dlon/2);  
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 	var d = R * c; 
-	alert(d);
 	return d;
 }
