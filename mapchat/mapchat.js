@@ -1,6 +1,7 @@
 var request = new XMLHttpRequest();
 var mylat = 0;
 var mylong = 0;
+var mymessage = "Hello!"
 var me = new google.maps.LatLng(mylat, mylong);
 var myOptions = {
 	zoom: 13,
@@ -42,16 +43,14 @@ function renderMap() {
 		infowindow.open(map, marker);
 	});
 	console.log("Calling post");
-	post(mylat, mylong, "RichRumfelt")
+	post(mylat, mylong, "RichRumfelt", "Hello!")
 }
 
-function post(lat, lng, login) {
+function post(lat, lng, login, message) {
 	var url = "https://secret-about-box.herokuapp.com/sendLocation";
-	var params = "login=" + login + "&lat=" + lat + "&lng=" + lng;
+	var params = "login=" + login + "&lat=" + lat + "&lng=" + lng + "&message=" + message;
 	request.open("POST", url, true);
 	request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	request.setRequestHeader("Content-length", params.length);
-	request.setRequestHeader("Connection", "close");
 	request.onreadystatechange = function() {
 		if (request.readyState == 4 && request.status == 200) {
 			data = JSON.parse(request.responseText);
@@ -70,6 +69,7 @@ function new_marker(data, myname) {
 	if (username != myname) {	
 		lat = data["lat"];
 		lng = data["lng"];
+		message = data["message"];
 		pos = new google.maps.LatLng(lat, lng);
 		marker = new google.maps.Marker({
 			position: pos,
@@ -78,7 +78,7 @@ function new_marker(data, myname) {
 		});
 	}
 	var distance = dist(mylat, mylong, lat, lng);
-	var distance_string = '<h1>' + username + '</h1>' + '<p>' + distance + ' miles from me.</p>';
+	var distance_string = '<h1>' + username + '</h1>' + '<h2>' + message +'</h2>' + '<p>' + distance + ' miles from me.</p>';
 	marker.content = distance_string;
 	infowindow = new google.maps.InfoWindow();
 	google.maps.event.addListener(marker, 'click', function() {
