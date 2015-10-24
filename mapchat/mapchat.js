@@ -11,6 +11,8 @@ var myOptions = {
 var map;
 var marker;
 var infowindow = new google.maps.InfoWindow();
+var lat = 0;
+var lng = 0;
 
 function init() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
