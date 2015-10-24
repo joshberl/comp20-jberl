@@ -52,7 +52,7 @@ function post(lat, lng, login) {
 	request.send(params);
 	request.onreadystatechange = function() {
 		if (request.readyState == 4 && request.status == 200) {
-			data = JSON.parse(request.responsText);
+			data = JSON.parse(request.responseText);
 			for (i = 0; i < data.length; i++) {
 				new_marker(data[i], login);
 			}
