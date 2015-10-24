@@ -62,6 +62,7 @@ function post(lat, lng, login) {
 
 function new_marker(data, myname) {
 	username = data["login"];
+	console.log(username, data)
 	if (username != myname) {	
 		lat = data["lat"];
 		lng = data["lng"];
