@@ -41,6 +41,7 @@ function renderMap() {
 		infowindow.setContent(marker.title);
 		infowindow.open(map, marker);
 	});
+	console.log("Calling post");
 	post(mylat, mylong, "RichRumfelt")
 }
 
@@ -54,6 +55,7 @@ function post(lat, lng, login) {
 		if (request.readyState == 4 && request.status == 200) {
 			data = JSON.parse(request.responseText);
 			for (i = 0; i < data.length; i++) {
+				console.log("calling new_marker");
 				new_marker(data[i], login);
 			}
 		}
