@@ -1,7 +1,8 @@
 var request = new XMLHttpRequest();
 var mylat = 0;
 var mylong = 0;
-var mymessage = "Hello!"
+var mymessage = "Howdy!";
+var login = "RichRumfelt";
 var me = new google.maps.LatLng(mylat, mylong);
 var myOptions = {
 	zoom: 13,
@@ -13,7 +14,7 @@ var marker;
 var infowindow = new google.maps.InfoWindow();
 var lat = 0;
 var lng = 0;
-var message = "Howdy!";
+var message = "";
 
 function init() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
@@ -33,11 +34,11 @@ function getMyLocation() {
 }
 
 function renderMap() {
-	me = new google.maps.LatLng(mylat, mylong, message);
+	me = new google.maps.LatLng(mylat, mylong, mymessage);
 	map.panTo(me);
 	marker = new google.maps.Marker({
 		position: me,
-		title: "RichRumfelt" + message,
+		title: login,
 		icon: 'chimp.png'
 	});
 	marker.setMap(map);
@@ -45,7 +46,7 @@ function renderMap() {
 		infowindow.setContent(marker.title);
 		infowindow.open(map, marker);
 	});
-	post(mylat, mylong, "RichRumfelt", "Howdy!")
+	post(mylat, mylong, login, mymessage);
 }
 
 function post(lat, lng, login, message) {
@@ -85,7 +86,7 @@ function new_marker(data, myname) {
 			infowindow.open(map, this);
 		});
 	} else {
-		var my_string = '<h1>' + myname + '</h1><h2>' + message + '</h2>';
+		var my_string = '<h1>' + myname + '</h1><h2>' + mymessage + '</h2>';
 		marker.content = my_string;
 		infowindow = new google.maps.InfoWindow();
 		google.maps.event.addListener(marker, 'click', function() {
