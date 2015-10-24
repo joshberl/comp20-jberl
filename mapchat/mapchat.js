@@ -62,6 +62,7 @@ function post(lat, lng, login) {
 
 function new_marker(data, myname) {
 	username = data["login"];
+	console.log(username, data)
 	if (username != myname) {	
 		lat = data["lat"];
 		lng = data["lng"];
@@ -73,7 +74,7 @@ function new_marker(data, myname) {
 		});
 	}
 	var distance = dist(mylat, mylong, lat, lng);
-	var distance_string = '<h1>' + username + '</h1>' + '<p>' + distance ' miles from me.</p>';
+	var distance_string = '<h1>' + username + '</h1>' + '<p>' + distance + ' miles from me.</p>';
 	marker.content = distance_string;
 	infowindow = new google.maps.InfoWindow();
 	google.maps.event.addListener(marker, 'click', function() {
