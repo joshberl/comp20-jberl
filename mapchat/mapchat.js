@@ -50,7 +50,7 @@ function renderMap() {
 }
 
 function post(lat, lng, login, message) {
-	var url = "https://secret-about-box.herokuapp.com/sendLocation";
+	var url = "https://damp-caverns-4167.herokuapp.com/sendLocation";
 	var params = "login=" + login + "&lat=" + lat + "&lng=" + lng + "&message=" + message;
 	request.open("POST", url, true);
 	request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
