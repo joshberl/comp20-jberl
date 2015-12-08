@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Security A4 Writeup</title>
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+</head>
+
+<body>
+	<h1>Security Assessment of Mapchat</h1>
+
+	<p>Prepared by <a href="joshberl.github.io">Josh Berl</a> 12/7/2015</p>
+
+	<h2>Introduction</h2>
+
+	<p>The product being tested is a location log for multiple users to checkin. It displays the most recent checkin for each user. I am attempting to find and document vulnerabilities in <a href="https://fathomless-castle-8172.herokuapp.com/">Grant Pemberton's Mapchat</a>. Vulnerabilities here include succeptability to cross site scripting (from now on referred to as XSS), lack of data validation, injection of additional fields. The specified product has no authentication, as it was not a part of the project to do so, so any user can send any user's data to the database. </p>
+
+	<h2>Methodology</h2>
+
+	<p>Tests were first run without looking at the code, using <code>curl</code> to check for a lack of data validation, extra parameters, and injection of additional fields. After this, tests were run with access to the code and the database, to see the effects of attempted XSS and data injection.</p>
+
+	<h2>Abstract of Findings</h2>
+
+	<p>The application, unfortunately, relies of the trusted user to provide valid input. The message functionality was not implemented, so much of the data had to be injected through the latitude and longitude parameters of input. The application proved to be susceptible to the injecting of styling, the addition of invalid data to the database, and XSS.</p>
+	
+	<h2>Issues Found</h2>
+
+	<ol>
+		<li>
+			<h3> Data Validation </h3>
+			<ul>
+				<li>The application does not ensure that the data in the lat or lng input parameters are valid latitudes or longitudes, so I first was successfully able to enter an invalid latitude and longitude using curl, providing values too large to be real lat or lng <code>curl --data "login=RichRumfelt&lat=250&lng=250&message=test_b" https://fathomless-castle-8172.herokuapp.com/sendLocation</code> which entered into the database without error.
+
+				I then attempted to put a string as the the lng parameter, using <code>curl --data "login=RichRumfelt&lat=250&lng=hello&message=test_b" https://fathomless-castle-8172.herokuapp.com/sendLocation</code> and I successfully entered this into the database without error.</li>
+
+				<li>This was found on the root page of the app</li>
+				<img src='hello.png' alt="lng parameter as string">
+
+				<li>This is a low severity issue, as it will not crash the server or affect any other data entries</li>
+
+				<li>This problem can be solved by checking to see if the value is a valid latitude or longitude. One could include before the insert the function a test along the lines of <code>!(-90 <= lat <= 90) || !(-180 <= lng <= 180)</code></li>
+			</ul>
+		</li>
+		<li>
+			<h3> Data Injection </h3>
+			<ul>
+				<li>As part of the theme of the lack of data validation, I tested to see if input is at all sanitized, by injecting CSS into the database. I attempted to change the styling of the root HTML by using curl to enter the bold tag. <code>curl --data "login=RichRumfelt&lat=25&lng=&lt;b&gt;hello" https://fathomless-castle-8172.herokuapp.com/sendLocation</code></li>
+
+				<li> This also was found on the root page of the app </li>
+				<img src='bold.png' alt="all text after lat is bold">
+
+				<li>This is a medium severity issue, as it does not affect the functionality of the site, but it does impact more data entries than the original.</li>
+
+				<li>This problem can be solved by checking the lat and lng parameters to make sure the values are in fact numbers and not stylings. Googling around it looks as if there is an IsNumeric() function which would make sure that the parameters are numbers.</li>
+			</ul>
+		</li>
+		<li>
+			<h3> XSS </h3>
+			<ul>
+				<li>Because there is no input sanitation, one could inject any sort of data as input, including scripts. I injected a script to cause a pop-up on the site using curl. <code>curl --data "login=RichRumfelt&lat=25&lng=&lt;script&gt; alert('HI'); &lt;/script&gt;" https://fathomless-castle-8172.herokuapp.com/sendLocation</code></li>
+
+				<li> This also took place at the root page of the app </li>
+				<img src='hacked.png' alt="pop-up hanging page">
+
+				<li>This is a high severity issue, as it freezes the site, preventing clients from accessing any of the site's data. This would be particularly harmful if this injected script redirected the site to a different url. It also prevents any of the rest of the page activity from taking place, such as any other possible scripts included.</li>
+
+				<li>This problem could also be solved by making sure the parameters are the correct type before entering them into the database.</li>
+			</ul>
+		</li>
+		<li>
+			<h3> Lack of Authentication </h3>
+			<ul>
+				<li>To send data to the database, all identification required is a username. Howerver, because there is no authentication, anybody who knows a username can submit data for that username. I can use curl to send the location of "mchow" just as easily as I can send the location of "kaytea".</li>
+
+				<li>The location of this issue is in sendLocation as well as latest.json, as there is no guarantee that the location received is accurate</li>
+
+				<li>This is a high severity issue in the accuracy of the application. No location is guaranteed to be accurate. No one is safe. </li>
+
+				<li>This could be solved by adding a password parameter, that needs to match a dictionary username password key pair.</li>
+			</ul>
+		</li>
+	</ol>
+
+	<h2>Conclusion</h2>
+	<p>Almost all of these issues could be resolved through data sanitization. This would ensure that the parameter values are numbers where they should be numbers, and string where they should be string, without adding in potentially malicious html and javascript. This solution would have a fairly low cost, adding a few checks which could all be accomplished in a few lines of code before entering any data into the database. Adding a password field, could prove to be a bit more costly, as it require changes on the frontend and the server, and it would require another collection of all usernames and passwords. Overall, the most important priority for database and application security is the sanitization of data.</p>
+</body>
+
+</html>
