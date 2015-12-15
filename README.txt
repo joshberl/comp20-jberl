@@ -1,0 +1,9 @@
+1. The purpose of this git repository is that is a portfolio of my web programming work. I can send this a link to potential employers to say, hey, check out all of this cool work I did.
+
+2. My favorite assignment was the client-side mapchat. It was amazing to see, for the first time, a functional, good-looking, map pop up and work. It was very exciting to see my code make an instant visual impact on the page. Also the security assignment was pretty fun, trying to figure out creative ways to mess up someone else's server and app.
+
+3. I think I have grown in terms of my understanding of all of the immensely different pieces that make up web development and the internet/networks in general. All of the different languages, frameworks, and tools that we used throughout the course opened my eyes to this complexity. Essentially, when I started the course, I could write a lot of code in C, and did not know how computers talked to each other.
+
+4. The most important things I learned in the course were how computers talk to each other and to never ever trust user input. Learning all of the HTTP GET and POST, request, response, send, and everything else gave me a much more clear idea of how it is that computers interact and talk to each other. Through intentionally sending terrible input, and watching other the work of my classmates crash and burn upon malicious attempts to break them, I learned that people cannot be trusted.
+
+5. I would like to delve more into front-end work and user interfaces. I would also like to get a little more confident in my understanding of server-side backend work, because I still feel a little bit shakey in implementing that with confidence.
